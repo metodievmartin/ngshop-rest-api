@@ -3,6 +3,8 @@ const categoriesCtrl = require('../controllers/categoriesController');
 
 const router = express.Router();
 
-router.get(`/`, categoriesCtrl.getAllCategories);
+router.route('/')
+  .get(categoriesCtrl.getAllCategories)
+  .post(categoriesCtrl.createCategory);
 
 module.exports =router;
