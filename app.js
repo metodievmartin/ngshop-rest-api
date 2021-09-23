@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors');
+
 const productsRouter = require('./routers/productsRouter');
 const categoriesRouter = require('./routers/categoriesRouter');
 const ordersRouter = require('./routers/ordersRouter');
@@ -13,11 +15,21 @@ dotenv.config({ path: './config.env' });
 
 const app = express();
 
-// - MIDDLEWARES -
-app.use(express.json());
-app.use(morgan('dev'));
+// -- GLOBAL MIDDLEWARES --
 
-// - DB -
+// CORS policy
+app.use(cors());
+
+// Body parser - parsing data from body into req.body
+app.use(express.json());
+
+// Development request logger
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+// -- DB --
+
 const DB = process.env.DB_CONNECTION;
 
 const options = {
@@ -36,7 +48,8 @@ mongoose.connect(
   }
 );
 
-// - ROUTES -
+// -- ROUTES --
+
 const api = process.env.API_URL;
 
 app.use(`${api}/products`, productsRouter);
@@ -44,7 +57,8 @@ app.use(`${api}/categories`, categoriesRouter);
 app.use(`${api}/users`, usersRouter);
 app.use(`${api}/orders`, ordersRouter);
 
-// - SERVER -
+// -- SERVER --
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server's running on http://localhost:${port}`);
