@@ -11,6 +11,7 @@ router.route('/')
 // /api/v1/categories/:id
 router.route('/:id')
   .get(categoriesCtrl.getCategoryById)
+  .put(categoriesCtrl.updateCategoryById)
   .delete(categoriesCtrl.deleteCategoryById)
 
 module.exports =router;

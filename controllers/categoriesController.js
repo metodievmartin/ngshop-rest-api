@@ -52,6 +52,34 @@ exports.createCategory = async (req, res) => {
   });
 };
 
+exports.updateCategoryById = async (req, res) => {
+  const categoryId = req.params.id;
+  const { name, icon, colour } = req.body;
+
+  const updatedCategory = {
+    name,
+    icon,
+    colour
+  };
+
+  const category = await Category
+    .findByIdAndUpdate(categoryId, updatedCategory, { new: true });
+
+  if (!category) {
+    return res.status(404).json({
+      status: 'failed',
+      message: 'Category with this ID could not be updated'
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      category
+    }
+  });
+};
+
 exports.deleteCategoryById = async (req, res) => {
   const categoryId = req.params.id;
 
