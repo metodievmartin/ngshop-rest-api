@@ -3,6 +3,9 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const productsRouter = require('./routers/productsRouter');
+const categoriesRouter = require('./routers/categoriesRouter');
+const ordersRouter = require('./routers/ordersRouter');
+const usersRouter = require('./routers/usersRouter');
 
 
 // Set ENV variables from config.env
@@ -37,6 +40,9 @@ mongoose.connect(
 const api = process.env.API_URL;
 
 app.use(`${api}/products`, productsRouter);
+app.use(`${api}/categories`, categoriesRouter);
+app.use(`${api}/users`, usersRouter);
+app.use(`${api}/orders`, ordersRouter);
 
 // - SERVER -
 const port = process.env.PORT || 5000;
