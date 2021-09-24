@@ -7,6 +7,27 @@ exports.getAllProducts = async (req, res) => {
   res.status(200).json(products);
 };
 
+exports.getProductById = async (req, res) => {
+  const productId = req.params.id;
+  const product = await Product
+    .findById(productId)
+    .populate('category');
+
+  if (!product) {
+    return res.status(404).json({
+      status: 'failed',
+      message: 'A product with this ID could not be found'
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product
+    }
+  });
+};
+
 exports.createProduct = async (req, res) => {
   const category = await Category.findById(req.body.category);
 
