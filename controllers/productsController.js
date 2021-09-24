@@ -69,3 +69,48 @@ exports.createProduct = async (req, res) => {
     }
   });
 };
+
+exports.updateProductById = async (req, res) => {
+  const category = await Category.findById(req.body.category);
+
+  if (!category) {
+    return res.status(400).json({
+      status: 'failed',
+      message: 'Invalid category ID'
+    });
+  }
+
+  const productId = req.params.id;
+
+  const updatedProduct = {
+    name: req.body.name,
+    description: req.body.description,
+    fullDescription: req.body.fullDescription,
+    image: req.body.image,
+    images:req.body.images,
+    brand: req.body.brand,
+    price: req.body.price,
+    category: req.body.category,
+    countInStock: req.body.countInStock,
+    rating: req.body.rating,
+    numReviews: req.body.numReviews,
+    isFeatured: req.body.isFeatured,
+  };
+
+  const product = await Product
+    .findByIdAndUpdate(productId, updatedProduct, { new: true });
+
+  if (!product) {
+    return res.status(404).json({
+      status: 'failed',
+      message: 'Product with this ID could not be updated'
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product
+    }
+  });
+};

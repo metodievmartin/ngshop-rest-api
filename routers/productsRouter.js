@@ -10,6 +10,7 @@ router.route('/')
 
 // /api/v1/products/:id
 router.route('/:id')
-  .get(productsCtrl.getProductById);
+  .get(productsCtrl.getProductById)
+  .put(productsCtrl.updateProductById);
 
 module.exports = router;
