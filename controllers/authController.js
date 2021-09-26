@@ -119,3 +119,17 @@ exports.protect = async (req, res, next) => {
   // 6) Grant access to the protected route
   next();
 };
+
+// Receives the roles that have permission to access the resource
+// *Must be called only after the 'protect' middleware func for it needs current user details
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+
+    // If user's current role is not included in the roles arr throw an error
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You do not have permission to perform this action', 403));
+    }
+
+    next();
+  };
+};
