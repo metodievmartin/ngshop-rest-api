@@ -10,6 +10,7 @@ const router = express.Router();
 
 // Authorization action endpoints - access by everyone
 router.post('/signup', authCtrl.signup);
+router.post('/login', authCtrl.login);
 
 router.get(`/`, usersCtrl.getAllUsers);
 
