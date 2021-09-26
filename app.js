@@ -8,6 +8,7 @@ const productsRouter = require('./routers/productsRouter');
 const categoriesRouter = require('./routers/categoriesRouter');
 const ordersRouter = require('./routers/ordersRouter');
 const usersRouter = require('./routers/usersRouter');
+const globalErrorHandler = require('./controllers/errorController');
 
 
 // Set ENV variables from config.env
@@ -56,6 +57,9 @@ app.use(`${api}/products`, productsRouter);
 app.use(`${api}/categories`, categoriesRouter);
 app.use(`${api}/users`, usersRouter);
 app.use(`${api}/orders`, ordersRouter);
+
+// -- GLOBAL ERROR HANDLER --
+app.use(globalErrorHandler);
 
 // -- SERVER --
 
