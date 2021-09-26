@@ -114,3 +114,23 @@ exports.updateProductById = async (req, res) => {
     }
   });
 };
+
+exports.getProductsCount = async (req, res) => {
+  const productsCount = await Product.countDocuments(count => count);
+
+  res.status(200).json({
+    status: 'success',
+    count: productsCount
+  });
+};
+
+exports.getFeaturedProducts = async (req, res) => {
+  const products = await Product.find({ isFeatured: true });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      products
+    }
+  });
+};
