@@ -71,3 +71,9 @@ exports.login = catchAsync(async (req, res, next) => {
   // 3) If everything is ok, send the token to client
   createSendToken(user, 200, res);
 });
+
+exports.logout = (req, res) => {
+  // TODO: Invalidate token
+
+  res.status(200).json({ status: 'success' });
+};
