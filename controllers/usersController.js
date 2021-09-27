@@ -1,17 +1,12 @@
+const factory = require('../controllers/controllerFactory');
 const { User } = require('../models/user');
-const catchAsync = require('../utils/catchAsync');
 
-exports.getAllUsers = catchAsync(async (req, res) =>{
-  const users = await User.find();
+exports.getAllUsers = factory.getAll(User);
 
-  res.status(200).json(users);
-});
+exports.getUserById = factory.getOne(User);
 
-exports.getUsersCount = catchAsync(async (req, res) => {
-  const usersCount = await User.countDocuments();
+exports.updateUserById = factory.updateOne(User);
 
-  res.status(200).json({
-    status: 'success',
-    count: usersCount
-  });
-});
+exports.deleteUserById = factory.deleteOne(User);
+
+exports.getUsersCount = factory.getCount(User);
