@@ -1,24 +1,25 @@
 const express = require('express');
+
 const productsCtrl = require('../controllers/productsController');
+const { authGuard, adminGuard } = require('../middlewares/guards');
 
 const router = express.Router();
 
-// /api/v1/categories
+/*
+   /api/v1/products
+*/
+
 router.route('/')
   .get(productsCtrl.getAllProducts)
-  .post(productsCtrl.createProduct);
+  .post(authGuard, adminGuard, productsCtrl.createProduct);
 
-// /api/v1/products/:id
 router.route('/:id')
   .get(productsCtrl.getProductById)
-  .put(productsCtrl.updateProductById);
+  .put(authGuard, adminGuard, productsCtrl.updateProductById)
+  .delete(authGuard, adminGuard, productsCtrl.deleteProduct);
 
-// /api/v1/products/get/count
 router.route('/get/count')
-  .get(productsCtrl.getProductsCount);
+  .get(authGuard, adminGuard, productsCtrl.getProductsCount);
 
-// /api/v1/products/get/featured
-router.route('/get/featured')
-  .get(productsCtrl.getFeaturedProducts)
 
 module.exports = router;
