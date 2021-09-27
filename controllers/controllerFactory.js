@@ -111,3 +111,14 @@ exports.getAll = (Model) =>
       }
     });
   });
+
+// Factory function that returns a generic handler to get the documents count in a collection
+exports.getCount = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const docsCount = await Model.countDocuments();
+
+    res.status(200).json({
+      status: 'success',
+      count: docsCount
+    });
+  });
