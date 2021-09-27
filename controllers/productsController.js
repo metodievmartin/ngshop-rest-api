@@ -1,41 +1,22 @@
+const factory = require('../controllers/controllerFactory');
+const catchAsync = require('../utils/catchAsync');
 const { Product } = require('../models/product');
 const { Category } = require('../models/category');
+const AppError = require('../utils/AppError');
 
-exports.getAllProducts = async (req, res) => {
-  const products = await Product.find();
+exports.getAllProducts = factory.getAll(Product);
 
-  res.status(200).json(products);
-};
+exports.getProductById = factory.getOne(Product, {
+  path: 'category'
+});
 
-exports.getProductById = async (req, res) => {
-  const productId = req.params.id;
-  const product = await Product
-    .findById(productId)
-    .populate('category');
-
-  if (!product) {
-    return res.status(404).json({
-      status: 'failed',
-      message: 'A product with this ID could not be found'
-    });
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      product
-    }
-  });
-};
-
-exports.createProduct = async (req, res) => {
+exports.createProduct = catchAsync(async (req, res, next) => {
   const category = await Category.findById(req.body.category);
 
   if (!category) {
-    return res.status(400).json({
-      status: 'failed',
-      message: 'Invalid category ID'
-    });
+    return next(
+      new AppError('Invalid category ID', 400)
+    );
   }
 
   let product = new Product({
@@ -56,10 +37,7 @@ exports.createProduct = async (req, res) => {
   product = await product.save();
 
   if (!product) {
-    return res.status(400).json({
-      status: 'failed',
-      message: 'Could not create a product'
-    });
+    return next(new AppError('No product found with this ID', 404));
   }
 
   res.status(200).json({
@@ -68,16 +46,15 @@ exports.createProduct = async (req, res) => {
       product
     }
   });
-};
+});
 
-exports.updateProductById = async (req, res) => {
+exports.updateProductById = catchAsync(async (req, res, next) => {
   const category = await Category.findById(req.body.category);
 
   if (!category) {
-    return res.status(400).json({
-      status: 'failed',
-      message: 'Invalid category ID'
-    });
+    return next(
+      new AppError('Invalid category ID', 400)
+    )
   }
 
   const productId = req.params.id;
@@ -101,10 +78,7 @@ exports.updateProductById = async (req, res) => {
     .findByIdAndUpdate(productId, updatedProduct, { new: true });
 
   if (!product) {
-    return res.status(404).json({
-      status: 'failed',
-      message: 'Product with this ID could not be updated'
-    });
+    return next(new AppError('No product found with this ID', 404));
   }
 
   res.status(200).json({
@@ -113,24 +87,8 @@ exports.updateProductById = async (req, res) => {
       product
     }
   });
-};
+});
 
-exports.getProductsCount = async (req, res) => {
-  const productsCount = await Product.countDocuments(count => count);
+exports.deleteProduct = factory.deleteOne(Product);
 
-  res.status(200).json({
-    status: 'success',
-    count: productsCount
-  });
-};
-
-exports.getFeaturedProducts = async (req, res) => {
-  const products = await Product.find({ isFeatured: true });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      products
-    }
-  });
-};
+exports.getProductsCount = factory.getCount(Product);
