@@ -80,7 +80,7 @@ exports.updateOrderById = catchAsync(async (req, res, next) => {
   const { status } = req.body;
 
   const updatedOrder = {
-   status
+    status
   };
 
   const order = await Order
@@ -120,5 +120,23 @@ exports.deleteOrderById = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: null
+  });
+});
+
+exports.getTotalSales = catchAsync(async (req, res, next) => {
+  const totalSales = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$totalPrice' }
+      }
+    }
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      totalSales: totalSales.pop().total
+    }
   });
 });

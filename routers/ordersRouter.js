@@ -16,4 +16,7 @@ router.route('/:id')
   .put(ordersCtrl.updateOrderById)
   .delete(ordersCtrl.deleteOrderById);
 
+router.route('/get/total-sales')
+  .get(ordersCtrl.getTotalSales)
+
 module.exports =router;
