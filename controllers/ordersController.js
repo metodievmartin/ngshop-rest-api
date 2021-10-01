@@ -75,7 +75,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateOrderById = catchAsync(async (req, res) => {
+exports.updateOrderById = catchAsync(async (req, res, next) => {
   const orderId = req.params.id;
   const { status } = req.body;
 
@@ -87,10 +87,9 @@ exports.updateOrderById = catchAsync(async (req, res) => {
     .findByIdAndUpdate(orderId, updatedOrder, { new: true });
 
   if (!order) {
-    return res.status(404).json({
-      status: 'failed',
-      message: 'Order with this ID could not be found'
-    });
+    return next(
+      new AppError('Could not find an order with this ID', 404)
+    );
   }
 
   res.status(200).json({
@@ -98,5 +97,28 @@ exports.updateOrderById = catchAsync(async (req, res) => {
     data: {
       order
     }
+  });
+});
+
+exports.deleteOrderById = catchAsync(async (req, res, next) => {
+  const orderId = req.params.id;
+
+  const order = await Order
+    .findByIdAndRemove(orderId);
+
+  // If such order exists loop through the OrderItem array and delete each item related to that order
+  if (order) {
+    order.orderItems.map(async orderItemId => {
+      await OrderItem.findByIdAndRemove(orderItemId);
+    });
+  } else {
+    return next(
+      new AppError('Could not find an order with this ID', 404)
+    );
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: null
   });
 });

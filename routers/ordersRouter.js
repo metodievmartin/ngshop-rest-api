@@ -13,6 +13,7 @@ router.route('/')
 
 router.route('/:id')
   .get(ordersCtrl.getOrderById)
-  .put(ordersCtrl.updateOrderById);
+  .put(ordersCtrl.updateOrderById)
+  .delete(ordersCtrl.deleteOrderById);
 
 module.exports =router;
