@@ -140,3 +140,5 @@ exports.getTotalSales = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+exports.getOrdersCount = factory.getCount(Order);

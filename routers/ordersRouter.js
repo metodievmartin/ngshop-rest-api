@@ -17,6 +17,9 @@ router.route('/:id')
   .delete(ordersCtrl.deleteOrderById);
 
 router.route('/get/total-sales')
-  .get(ordersCtrl.getTotalSales)
+  .get(ordersCtrl.getTotalSales);
+
+router.route('/get/total-count')
+  .get(ordersCtrl.getOrdersCount);
 
 module.exports =router;
