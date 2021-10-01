@@ -111,6 +111,8 @@ exports.getCount = (Model) =>
 
     res.status(200).json({
       status: 'success',
-      count: docsCount
+      data: {
+        count: docsCount
+      }
     });
   });
