@@ -1,8 +1,8 @@
 const factory = require('../controllers/controllerFactory');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/AppError');
 const { Product } = require('../models/product');
 const { Category } = require('../models/category');
-const AppError = require('../utils/AppError');
 
 exports.getAllProducts = factory.getAll(Product);
 
@@ -24,7 +24,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     description: req.body.description,
     fullDescription: req.body.fullDescription,
     image: req.body.image,
-    images:req.body.images,
+    images: req.body.images,
     brand: req.body.brand,
     price: req.body.price,
     category: req.body.category,
@@ -54,7 +54,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
   if (!category) {
     return next(
       new AppError('Invalid category ID', 400)
-    )
+    );
   }
 
   const productId = req.params.id;
@@ -64,7 +64,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     description: req.body.description,
     fullDescription: req.body.fullDescription,
     image: req.body.image,
-    images:req.body.images,
+    images: req.body.images,
     brand: req.body.brand,
     price: req.body.price,
     category: req.body.category,
