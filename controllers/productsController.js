@@ -1,8 +1,40 @@
+const multer = require('multer');
+
 const factory = require('../controllers/controllerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 const { Product } = require('../models/product');
 const { Category } = require('../models/category');
+
+// Allowed MIME Types and their respective file extensions
+const FILE_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpg': 'jpg',
+  'image/jpeg': 'jpeg',
+};
+
+// Create image storage options
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const isValid = FILE_TYPE_MAP[file.mimetype];
+    let uploadError = new AppError('Invalid image type', 400);
+
+    // If valid MIME Type clear the error passed to the callback function
+    if (isValid) uploadError = null;
+
+    // Callback function
+    cb(uploadError, 'public/uploads');
+  },
+  filename: function (req, file, cb) {
+    const fileName = file.originalname.replace(' ', '-');
+    const extension = FILE_TYPE_MAP[file.mimetype];
+    // Build uploaded file's full name => file.jpg-1633189651418.jpeg
+    const fullName = `${fileName}-${Date.now()}.${extension}`;
+    cb(null, );
+  }
+});
+
+exports.imageUpload = multer({ storage: storage });
 
 exports.getAllProducts = factory.getAll(Product);
 
@@ -11,6 +43,12 @@ exports.getProductById = factory.getOne(Product, {
 });
 
 exports.createProduct = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    return next(
+      new AppError('A product image is required', 400)
+    );
+  }
+
   const category = await Category.findById(req.body.category);
 
   if (!category) {
@@ -19,11 +57,16 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     );
   }
 
+  // Build the url to the file
+  const fileName = req.file.filename;
+  const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+  const imageFullPath = `${basePath}${fileName}`;
+
   let product = new Product({
     name: req.body.name,
     description: req.body.description,
     fullDescription: req.body.fullDescription,
-    image: req.body.image,
+    image: imageFullPath,
     images: req.body.images,
     brand: req.body.brand,
     price: req.body.price,

@@ -5,13 +5,15 @@ const { authGuard, adminGuard } = require('../middlewares/guards');
 
 const router = express.Router();
 
+const singleImageUpload = productsCtrl.imageUpload.single('image');
+
 /*
    /api/v1/products
 */
 
 router.route('/')
   .get(productsCtrl.getAllProducts)
-  .post(authGuard, adminGuard, productsCtrl.createProduct);
+  .post(authGuard, adminGuard, singleImageUpload, productsCtrl.createProduct);
 
 router.route('/:id')
   .get(productsCtrl.getProductById)
