@@ -24,6 +24,9 @@ app.use(cors());
 // Body parser - parsing data from body into req.body
 app.use(express.json());
 
+// Set up the static files folder
+app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
+
 // Development request logger
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
