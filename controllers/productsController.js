@@ -102,12 +102,35 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
 
   const productId = req.params.id;
 
+  // Query the product that's being updated and check if it exists
+  const currentProduct = await Product.findById(productId);
+
+  if (!currentProduct) {
+    return next(
+      new AppError('A product with this ID was not found', 404)
+    );
+  }
+
+  // Grab the uploaded image file
+  const file = req.file;
+
+  // Build the base URL to the file
+  const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+
+  // Assign the already existing image path in case no new image has been uploaded
+  let imageFullPath = currentProduct.image;
+
+  // Check if an image has been uploaded
+  if (file) {
+    // Assign the newly uploaded image's path
+    imageFullPath = `${basePath}${file.filename}`;
+  }
+
   const updatedProduct = {
     name: req.body.name,
     description: req.body.description,
     fullDescription: req.body.fullDescription,
-    image: req.body.image,
-    images: req.body.images,
+    image: imageFullPath,
     brand: req.body.brand,
     price: req.body.price,
     category: req.body.category,
