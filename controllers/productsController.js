@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
     const extension = FILE_TYPE_MAP[file.mimetype];
     // Build uploaded file's full name => file.jpg-1633189651418.jpeg
     const fullName = `${fileName}-${Date.now()}.${extension}`;
-    cb(null, );
+    cb(null, fullName);
   }
 });
 
@@ -115,6 +115,44 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     rating: req.body.rating,
     numReviews: req.body.numReviews,
     isFeatured: req.body.isFeatured,
+  };
+
+  const product = await Product
+    .findByIdAndUpdate(productId, updatedProduct, { new: true });
+
+  if (!product) {
+    return next(new AppError('No product found with this ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product
+    }
+  });
+});
+
+exports.updateProductsGalleryById = catchAsync(async (req, res, next) => {
+  const productId = req.params.id;
+
+  // Grab the upload image files
+  const files = req.files;
+
+  let imagesPaths = [];
+
+  // Build the base URL
+  const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+
+  // If images have been uploaded extract each image's full path and push it into imagesPaths array
+  if (files) {
+    files.map(file => {
+      const imageFullPath = `${basePath}${file.filename}`;
+      imagesPaths.push(imageFullPath);
+    });
+  }
+
+  const updatedProduct = {
+    images: imagesPaths
   };
 
   const product = await Product

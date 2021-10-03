@@ -6,6 +6,7 @@ const { authGuard, adminGuard } = require('../middlewares/guards');
 const router = express.Router();
 
 const singleImageUpload = productsCtrl.imageUpload.single('image');
+const multipleImagesUpload = productsCtrl.imageUpload.array('images', 10);
 
 /*
    /api/v1/products
@@ -23,5 +24,7 @@ router.route('/:id')
 router.route('/get/count')
   .get(authGuard, adminGuard, productsCtrl.getProductsCount);
 
+router.route('/gallery-images/:id')
+  .put(authGuard, adminGuard, multipleImagesUpload, productsCtrl.updateProductsGalleryById);
 
 module.exports = router;
