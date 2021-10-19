@@ -82,7 +82,7 @@ Factory function that returns a generic handler to fetch all document from given
   - this function will take into account all applicable queries sent through the req.query and
   will apply them to the db query
 */
-exports.getAll = (Model) =>
+exports.getAll = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
 
     // Build the query
@@ -94,7 +94,7 @@ exports.getAll = (Model) =>
       .paginate();
 
     // Execute the query
-    const docs = await features.query;
+    const docs = await features.query.populate(populateOptions);
 
     // Send response
     res.status(200).json({
@@ -111,8 +111,6 @@ exports.getCount = (Model) =>
 
     res.status(200).json({
       status: 'success',
-      data: {
-        count: docsCount
-      }
+      data: docsCount
     });
   });

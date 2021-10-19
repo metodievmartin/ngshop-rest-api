@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
 
 exports.imageUpload = multer({ storage: storage });
 
-exports.getAllProducts = factory.getAll(Product);
+exports.getAllProducts = factory.getAll(Product, [{ path: 'category', select: 'name'}]);
 
 exports.getProductById = factory.getOne(Product, {
   path: 'category'
@@ -75,6 +75,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     rating: req.body.rating,
     numReviews: req.body.numReviews,
     isFeatured: req.body.isFeatured,
+    dateCreated: Date.now()
   });
 
   product = await product.save();
@@ -85,9 +86,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      product
-    }
+    data: product
   });
 });
 
@@ -149,9 +148,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      product
-    }
+    data: product
   });
 });
 
@@ -187,9 +184,7 @@ exports.updateProductsGalleryById = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      product
-    }
+    data: product
   });
 });
 

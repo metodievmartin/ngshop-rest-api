@@ -14,7 +14,7 @@ const signToken = (id, isAdmin) => {
 
 const createSendToken = (user, statusCode, res) => {
   // Create new signed token
-  const token = signToken(user._id);
+  const token = signToken(user._id, user.isAdmin);
 
   // Set values to undefined so that they are not not displayed in the response
   user.password = undefined;
@@ -24,9 +24,7 @@ const createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: 'success',
     token,
-    data: {
-      user
-    }
+    data: user
   });
 };
 

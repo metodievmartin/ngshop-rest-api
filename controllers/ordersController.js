@@ -4,9 +4,23 @@ const AppError = require('../utils/AppError');
 const { Order } = require('../models/order');
 const { OrderItem } = require('../models/order-item');
 
-exports.getAllOrders = factory.getAll(Order);
+const orderPopulateOptions = [
+  {
+    path: 'orderItems',
+    populate: {
+      path: 'product',
+      populate: {
+        path: 'category'
+      }
+    },
+  },
+  {
+    path: 'user'
+  }
+];
+exports.getAllOrders = factory.getAll(Order, orderPopulateOptions);
 
-exports.getOrderById = factory.getOne(Order);
+exports.getOrderById = factory.getOne(Order, orderPopulateOptions);
 
 exports.createOrder = catchAsync(async (req, res, next) => {
 
@@ -69,9 +83,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      order
-    }
+    data: order
   });
 });
 
@@ -94,9 +106,7 @@ exports.updateOrderById = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      order
-    }
+    data: order
   });
 });
 
@@ -135,9 +145,7 @@ exports.getTotalSales = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      totalSales: totalSales.pop().total
-    }
+    data: totalSales.pop().total
   });
 });
 
