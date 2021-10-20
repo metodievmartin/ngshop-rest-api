@@ -15,7 +15,9 @@ router.post('/signup', authCtrl.signup);
 router.post('/login', authCtrl.login);
 router.get('/logout', authCtrl.logout);
 
-router.get('/', authGuard, adminGuard, usersCtrl.getAllUsers);
+router.route('/')
+  .get(authGuard, adminGuard, usersCtrl.getAllUsers)
+  .post(authGuard, adminGuard, usersCtrl.createUser);
 
 router.route('/:id')
   .get(authGuard, adminGuard, usersCtrl.getUserById)

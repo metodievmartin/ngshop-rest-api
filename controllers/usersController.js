@@ -5,6 +5,8 @@ exports.getAllUsers = factory.getAll(User);
 
 exports.getUserById = factory.getOne(User);
 
+exports.createUser = factory.createOne(User);
+
 exports.updateUserById = factory.updateOne(User);
 
 exports.deleteUserById = factory.deleteOne(User);
