@@ -18,7 +18,7 @@ router.route('/')
 
 router.route('/:id')
   .get(productsCtrl.getProductById)
-  .put(authGuard, adminGuard, productsCtrl.updateProductById)
+  .put(authGuard, adminGuard, singleImageUpload, productsCtrl.updateProductById)
   .delete(authGuard, adminGuard, productsCtrl.deleteProduct);
 
 router.route('/get/count')
