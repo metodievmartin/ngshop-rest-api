@@ -18,11 +18,23 @@ class APIFeatures {
     // Remove those field from the queryObj
     excludeFields.forEach(el => delete queryObj[el]);
 
+    // Check if querying by category - this will allow querying by multiple category IDs
+    if (queryObj.category) {
+      // Split to get all category IDs into one array
+      const categoryIds = queryObj.category.split(',');
+
+      // Assign the category IDs array to the query param so that if queried by multiple
+      // category IDs the DB will find them and send response correctly
+      queryObj.category = categoryIds;
+    }
+
     // Stringify the queryObj into a queryString so that string operations can be performed on it
     let queryStr = JSON.stringify(queryObj);
 
     // Find mongoose operators and add a '$' symbol before each one to make them valid filter operators
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+    console.log(queryStr);
 
     // Apply the queryObj to the db query filter
     this.query = this.query.find(JSON.parse(queryStr));
