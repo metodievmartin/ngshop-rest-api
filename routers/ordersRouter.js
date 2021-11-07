@@ -7,6 +7,9 @@ const router = express.Router();
 // All routes require authentication & authorization to get access
 router.use(authGuard, adminGuard);
 
+router.route('/create-checkout-session')
+  .post(ordersCtrl.createCheckoutSession);
+
 router.route('/')
   .get(ordersCtrl.getAllOrders)
   .post(ordersCtrl.createOrder);

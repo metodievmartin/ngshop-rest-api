@@ -1,8 +1,10 @@
 const factory = require('../controllers/controllerFactory');
 const catchAsync = require('../utils/catchAsync');
+const stripe = require('stripe')('sk_test_51JtDjyJyhkBhB4lKjnO3gSq40PdNlPJ5RxBfxz2jXdjg34JWG8s5ciH7kNyZPHNJq2viONhPYTRXXrhTRUEQZxKq000Tdo14lv');
 const AppError = require('../utils/AppError');
 const { Order } = require('../models/order');
 const { OrderItem } = require('../models/order-item');
+const { Product } = require('../models/product');
 
 const orderPopulateOptions = [
   {
@@ -150,3 +152,42 @@ exports.getTotalSales = catchAsync(async (req, res, next) => {
 });
 
 exports.getOrdersCount = factory.getCount(Order);
+
+exports.createCheckoutSession = catchAsync(async (req, res, next) => {
+  const orderItems = req.body;
+
+  if (!orderItems) {
+    return next(
+      new AppError('Checkout session cannot be created - check the order items', 400)
+    );
+  }
+
+  const lineItems = await Promise.all(
+    orderItems.map(async orderItem => {
+      const product = await Product.findById(orderItem.product);
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: product.name
+          },
+          unit_amount: product.price * 100,
+        },
+        quantity: orderItem.quantity
+      }
+    })
+  );
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: lineItems,
+    mode: 'payment',
+    success_url: 'http://localhost:4200/success',
+    cancel_url: 'http://localhost:4200/error',
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: session.id
+  });
+});
